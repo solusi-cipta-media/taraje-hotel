@@ -404,7 +404,7 @@ export default function OperasionalKamarPage() {
 
   // Generate grid cells
   const gridCells = useMemo(() => {
-    const cells = [];
+    const cells: React.ReactElement[] = [];
     const totalCells = gridCols * gridRows;
 
     for (let i = 0; i < totalCells; i++) {
@@ -679,9 +679,11 @@ export default function OperasionalKamarPage() {
                         <DragOverlay>
                           {activeId ? (
                             <DraggableRoom
-                              room={unpositionedRooms.find(
-                                (r) => r.id === activeId
-                              )}
+                              room={
+                                unpositionedRooms.find(
+                                  (r) => r.id === activeId
+                                )!
+                              }
                               tipeKamar={tipeKamar.find(
                                 (t) =>
                                   t.id ===

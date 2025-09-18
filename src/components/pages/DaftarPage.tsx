@@ -59,6 +59,9 @@ export default function DaftarPage() {
         email: formData.email,
         password: formData.password,
         role: "Customer",
+        namaLengkap: formData.nama,
+        peran: "Customer",
+        status: "Aktif",
       });
 
       toast.success("Pendaftaran berhasil! Selamat datang!");

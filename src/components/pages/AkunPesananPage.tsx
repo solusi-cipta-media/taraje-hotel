@@ -97,11 +97,15 @@ export default function AkunPesananPage() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">
-                    {getRoomName(booking.tipeKamarId)}
+                    {booking.tipeKamarId
+                      ? getRoomName(booking.tipeKamarId)
+                      : ""}
                   </CardTitle>
-                  <Badge variant={getStatusVariant(booking.status)}>
-                    {getStatusText(booking.status)}
-                  </Badge>
+                  {booking.status && (
+                    <Badge variant={getStatusVariant(booking.status)}>
+                      {getStatusText(booking.status)}
+                    </Badge>
+                  )}{" "}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -143,11 +147,17 @@ export default function AkunPesananPage() {
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                     <span className="font-semibold">
-                      Rp {booking.totalHarga.toLocaleString("id-ID")}
+                      Rp{" "}
+                      {booking.totalHarga
+                        ? booking.totalHarga.toLocaleString("id-ID")
+                        : "-"}
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Dipesan: {formatDate(booking.tanggalPesan)}
+                    Dipesan:{" "}
+                    {booking.tanggalPesan
+                      ? formatDate(booking.tanggalPesan)
+                      : "-"}
                   </div>
                 </div>
 

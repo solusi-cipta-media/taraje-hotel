@@ -318,7 +318,7 @@ export default function MasterPenggunaPage() {
 
   // Check if user can be edited/disabled (not current user)
   const canModifyUser = (user: any) => {
-    return currentUser && currentUser.id !== user.id;
+    return currentUser && user && currentUser.id !== user.id;
   };
 
   return (

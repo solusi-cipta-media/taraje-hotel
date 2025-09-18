@@ -47,7 +47,13 @@ export interface Kamar {
   id: string;
   nomor: string;
   tipeKamarId: string;
-  status: "Tersedia" | "Dipesan" | "Dibersihkan" | "Perbaikan";
+  status:
+    | "Tersedia"
+    | "Dipesan"
+    | "Dibersihkan"
+    | "Perbaikan"
+    | "Terisi"
+    | "Maintenance";
   lantai: number;
   posisiLayout: number | null;
 }

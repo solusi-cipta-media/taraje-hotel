@@ -251,7 +251,9 @@ export default function DasborUtamaPage() {
                 >
                   <div className="space-y-1">
                     <p className="font-medium">
-                      {getRoomName(booking.tipeKamarId)}
+                      {booking.tipeKamarId
+                        ? getRoomName(booking.tipeKamarId)
+                        : "-"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {formatDate(booking.tanggalCheckIn)} -{" "}
@@ -259,11 +261,16 @@ export default function DasborUtamaPage() {
                     </p>
                   </div>
                   <div className="text-right space-y-1">
-                    <Badge variant={getStatusVariant(booking.status)}>
-                      {getStatusText(booking.status)}
-                    </Badge>
+                    {booking.status && (
+                      <Badge variant={getStatusVariant(booking.status)}>
+                        {getStatusText(booking.status)}
+                      </Badge>
+                    )}
                     <p className="text-sm font-medium">
-                      Rp {booking.totalHarga.toLocaleString("id-ID")}
+                      Rp{" "}
+                      {booking.totalHarga
+                        ? booking.totalHarga.toLocaleString("id-ID")
+                        : "-"}
                     </p>
                   </div>
                 </div>
