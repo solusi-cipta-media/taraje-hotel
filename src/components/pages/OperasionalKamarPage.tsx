@@ -1,15 +1,27 @@
-import React, { useState, useMemo } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { DoorOpen, Settings, Trash2, GripVertical } from 'lucide-react'
-import { useAppStore, type Kamar } from '@/lib/store'
-import { toast } from 'sonner'
+import React, { useState, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { DoorOpen, Settings, Trash2, GripVertical } from "lucide-react";
+import { useAppStore, type Kamar } from "@/lib/store";
+import { toast } from "sonner";
 import {
   DndContext,
   DragEndEvent,
@@ -19,42 +31,42 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core'
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+} from "@dnd-kit/core";
+import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 // Status color mapping
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Tersedia':
-      return 'bg-green-100 text-green-800 border-green-200'
-    case 'Dipesan':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-    case 'Dibersihkan':
-      return 'bg-blue-100 text-blue-800 border-blue-200'
-    case 'Perbaikan':
-      return 'bg-red-100 text-red-800 border-red-200'
+    case "Tersedia":
+      return "bg-green-100 text-green-800 border-green-200";
+    case "Dipesan":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "Dibersihkan":
+      return "bg-blue-100 text-blue-800 border-blue-200";
+    case "Perbaikan":
+      return "bg-red-100 text-red-800 border-red-200";
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200'
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
-}
+};
 
 // Format currency
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
     minimumFractionDigits: 0,
-  }).format(amount)
-}
+  }).format(amount);
+};
 
 // Room Card Component
 interface RoomCardProps {
-  room: Kamar
-  tipeKamar: any
-  onStatusChange: (roomId: string) => void
-  canEdit: boolean
+  room: Kamar;
+  tipeKamar: any;
+  onStatusChange: (roomId: string) => void;
+  canEdit: boolean;
 }
 
 function RoomCard({ room, tipeKamar, onStatusChange, canEdit }: RoomCardProps) {
@@ -71,12 +83,14 @@ function RoomCard({ room, tipeKamar, onStatusChange, canEdit }: RoomCardProps) {
       <CardContent className="pt-0">
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">{tipeKamar?.nama}</p>
-          <p className="text-sm font-medium">{formatCurrency(tipeKamar?.hargaDefault || 0)}</p>
+          <p className="text-sm font-medium">
+            {formatCurrency(tipeKamar?.hargaDefault || 0)}
+          </p>
           <Button
             size="sm"
             variant="outline"
             onClick={() => onStatusChange(room.id)}
-            disabled={!canEdit || room.status === 'Dipesan'}
+            disabled={!canEdit || room.status === "Dipesan"}
             className="w-full"
           >
             Ubah Status
@@ -84,29 +98,34 @@ function RoomCard({ room, tipeKamar, onStatusChange, canEdit }: RoomCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Status Change Modal Component
 interface StatusChangeModalProps {
-  isOpen: boolean
-  onClose: () => void
-  room: Kamar | null
-  onConfirm: (newStatus: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  room: Kamar | null;
+  onConfirm: (newStatus: string) => void;
 }
 
-function StatusChangeModal({ isOpen, onClose, room, onConfirm }: StatusChangeModalProps) {
-  const [selectedStatus, setSelectedStatus] = useState<string>('')
-  const { getAvailableStatusOptions } = useAppStore()
+function StatusChangeModal({
+  isOpen,
+  onClose,
+  room,
+  onConfirm,
+}: StatusChangeModalProps) {
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const { getAvailableStatusOptions } = useAppStore();
 
-  const availableOptions = room ? getAvailableStatusOptions(room.status) : []
+  const availableOptions = room ? getAvailableStatusOptions(room.status) : [];
 
   const handleConfirm = () => {
     if (selectedStatus && selectedStatus !== room?.status) {
-      onConfirm(selectedStatus)
-      onClose()
+      onConfirm(selectedStatus);
+      onClose();
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -118,7 +137,10 @@ function StatusChangeModal({ isOpen, onClose, room, onConfirm }: StatusChangeMod
           <div>
             <Label>Status Saat Ini</Label>
             <div className="mt-2">
-              <Badge variant="outline" className={getStatusColor(room?.status || '')}>
+              <Badge
+                variant="outline"
+                className={getStatusColor(room?.status || "")}
+              >
                 {room?.status}
               </Badge>
             </div>
@@ -143,7 +165,7 @@ function StatusChangeModal({ isOpen, onClose, room, onConfirm }: StatusChangeMod
           <Button variant="outline" onClick={onClose}>
             Batal
           </Button>
-          <Button 
+          <Button
             onClick={handleConfirm}
             disabled={!selectedStatus || selectedStatus === room?.status}
           >
@@ -152,17 +174,21 @@ function StatusChangeModal({ isOpen, onClose, room, onConfirm }: StatusChangeMod
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Draggable Room Item for Layout Designer
 interface DraggableRoomProps {
-  room: Kamar
-  tipeKamar: any
-  isOverlay?: boolean
+  room: Kamar;
+  tipeKamar: any;
+  isOverlay?: boolean;
 }
 
-function DraggableRoom({ room, tipeKamar, isOverlay = false }: DraggableRoomProps) {
+function DraggableRoom({
+  room,
+  tipeKamar,
+  isOverlay = false,
+}: DraggableRoomProps) {
   const {
     attributes,
     listeners,
@@ -172,13 +198,13 @@ function DraggableRoom({ room, tipeKamar, isOverlay = false }: DraggableRoomProp
     isDragging,
   } = useSortable({
     id: room.id,
-  })
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  }
+  };
 
   return (
     <div
@@ -187,7 +213,7 @@ function DraggableRoom({ room, tipeKamar, isOverlay = false }: DraggableRoomProp
       {...attributes}
       {...listeners}
       className={`p-3 bg-white border rounded-lg shadow-sm cursor-grab hover:shadow-md transition-shadow ${
-        isOverlay ? 'rotate-3' : ''
+        isOverlay ? "rotate-3" : ""
       }`}
     >
       <div className="flex items-center gap-2">
@@ -198,32 +224,27 @@ function DraggableRoom({ room, tipeKamar, isOverlay = false }: DraggableRoomProp
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Grid Cell Component
 interface GridCellProps {
-  position: number
-  room?: Kamar
-  tipeKamar?: any
-  onRemoveRoom?: (roomId: string) => void
+  position: number;
+  room?: Kamar;
+  tipeKamar?: any;
+  onRemoveRoom?: (roomId: string) => void;
 }
 
 function GridCell({ position, room, tipeKamar, onRemoveRoom }: GridCellProps) {
-  const {
-    setNodeRef,
-    isOver,
-  } = useSortable({
+  const { setNodeRef, isOver } = useSortable({
     id: `cell-${position}`,
-  })
+  });
 
   return (
     <div
       ref={setNodeRef}
       className={`aspect-square border-2 border-dashed rounded-lg p-2 transition-colors ${
-        isOver
-          ? 'border-primary bg-primary/10'
-          : 'border-gray-300 bg-gray-50'
+        isOver ? "border-primary bg-primary/10" : "border-gray-300 bg-gray-50"
       }`}
     >
       {room ? (
@@ -237,7 +258,9 @@ function GridCell({ position, room, tipeKamar, onRemoveRoom }: GridCellProps) {
             <Trash2 className="h-3 w-3" />
           </Button>
           <p className="font-medium text-xs">{room.nomor}</p>
-          <p className="text-xs text-muted-foreground truncate">{tipeKamar?.nama}</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {tipeKamar?.nama}
+          </p>
         </div>
       ) : (
         <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
@@ -245,7 +268,7 @@ function GridCell({ position, room, tipeKamar, onRemoveRoom }: GridCellProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export default function OperasionalKamarPage() {
@@ -260,21 +283,21 @@ export default function OperasionalKamarPage() {
     updateRoomPosition,
     getLayoutForFloor,
     getRoomsForFloor,
-    getUnpositionedRoomsForFloor
-  } = useAppStore()
+    getUnpositionedRoomsForFloor,
+  } = useAppStore();
 
   // State for status view
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [tipeFilter, setTipeFilter] = useState<string>('all')
-  const [lantaiFilter, setLantaiFilter] = useState<string>('all')
-  const [selectedRoom, setSelectedRoom] = useState<Kamar | null>(null)
-  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [tipeFilter, setTipeFilter] = useState<string>("all");
+  const [lantaiFilter, setLantaiFilter] = useState<string>("all");
+  const [selectedRoom, setSelectedRoom] = useState<Kamar | null>(null);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   // State for layout view (Admin only)
-  const [selectedFloor, setSelectedFloor] = useState<number>(1)
-  const [gridCols, setGridCols] = useState<number>(8)
-  const [gridRows, setGridRows] = useState<number>(4)
-  const [activeId, setActiveId] = useState<string | null>(null)
+  const [selectedFloor, setSelectedFloor] = useState<number>(1);
+  const [gridCols, setGridCols] = useState<number>(8);
+  const [gridRows, setGridRows] = useState<number>(4);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -283,106 +306,113 @@ export default function OperasionalKamarPage() {
         distance: 8,
       },
     })
-  )
+  );
 
   // Initialize layout settings when floor changes
   React.useEffect(() => {
-    const layout = getLayoutForFloor(selectedFloor)
+    const layout = getLayoutForFloor(selectedFloor);
     if (layout) {
-      setGridCols(layout.gridKolom)
-      setGridRows(layout.gridBaris)
+      setGridCols(layout.gridKolom);
+      setGridRows(layout.gridBaris);
     }
-  }, [selectedFloor, getLayoutForFloor])
+  }, [selectedFloor, getLayoutForFloor]);
 
   // Filter rooms for status view
   const filteredRooms = useMemo(() => {
-    return kamar.filter(room => {
-      if (statusFilter !== 'all' && room.status !== statusFilter) return false
-      if (tipeFilter !== 'all' && room.tipeKamarId !== tipeFilter) return false
-      if (lantaiFilter !== 'all' && room.lantai !== parseInt(lantaiFilter)) return false
-      return true
-    })
-  }, [kamar, statusFilter, tipeFilter, lantaiFilter])
+    return kamar.filter((room) => {
+      if (statusFilter !== "all" && room.status !== statusFilter) return false;
+      if (tipeFilter !== "all" && room.tipeKamarId !== tipeFilter) return false;
+      if (lantaiFilter !== "all" && room.lantai !== parseInt(lantaiFilter))
+        return false;
+      return true;
+    });
+  }, [kamar, statusFilter, tipeFilter, lantaiFilter]);
 
   // Get unique floor numbers
   const floors = useMemo(() => {
-    const floorNumbers = [...new Set(kamar.map(k => k.lantai))].sort()
-    return floorNumbers
-  }, [kamar])
+    const floorNumbers = [...new Set(kamar.map((k) => k.lantai))].sort();
+    return floorNumbers;
+  }, [kamar]);
 
   // Layout designer data
   const unpositionedRooms = useMemo(() => {
-    return getUnpositionedRoomsForFloor(selectedFloor)
-  }, [getUnpositionedRoomsForFloor, selectedFloor])
+    return getUnpositionedRoomsForFloor(selectedFloor);
+  }, [getUnpositionedRoomsForFloor, selectedFloor]);
 
   const positionedRooms = useMemo(() => {
-    return getRoomsForFloor(selectedFloor).filter(room => room.posisiLayout !== null)
-  }, [getRoomsForFloor, selectedFloor])
+    return getRoomsForFloor(selectedFloor).filter(
+      (room) => room.posisiLayout !== null
+    );
+  }, [getRoomsForFloor, selectedFloor]);
 
   // Handle status change
   const handleStatusChange = (roomId: string) => {
-    const room = kamar.find(k => k.id === roomId)
-    if (!room) return
+    const room = kamar.find((k) => k.id === roomId);
+    if (!room) return;
 
     if (!canUpdateRoomStatus(roomId, room.status)) {
-      toast.error('Status kamar ini tidak dapat diubah')
-      return
+      toast.error("Status kamar ini tidak dapat diubah");
+      return;
     }
 
-    setSelectedRoom(room)
-    setIsStatusModalOpen(true)
-  }
+    setSelectedRoom(room);
+    setIsStatusModalOpen(true);
+  };
 
   const handleConfirmStatusChange = (newStatus: string) => {
     if (selectedRoom) {
-      updateRoomStatus(selectedRoom.id, newStatus as Kamar['status'])
-      toast.success(`Status kamar ${selectedRoom.nomor} berhasil diubah menjadi ${newStatus}`)
+      updateRoomStatus(selectedRoom.id, newStatus as Kamar["status"]);
+      toast.success(
+        `Status kamar ${selectedRoom.nomor} berhasil diubah menjadi ${newStatus}`
+      );
     }
-    setSelectedRoom(null)
-  }
+    setSelectedRoom(null);
+  };
 
   // Handle layout operations
   const handleSaveLayout = () => {
-    updateLayoutLantai(selectedFloor, gridCols, gridRows)
-    toast.success(`Layout lantai ${selectedFloor} berhasil disimpan`)
-  }
+    updateLayoutLantai(selectedFloor, gridCols, gridRows);
+    toast.success(`Layout lantai ${selectedFloor} berhasil disimpan`);
+  };
 
   const handleRemoveRoomFromGrid = (roomId: string) => {
-    updateRoomPosition(roomId, selectedFloor, null)
-    toast.success('Kamar berhasil dipindahkan kembali ke daftar')
-  }
+    updateRoomPosition(roomId, selectedFloor, null);
+    toast.success("Kamar berhasil dipindahkan kembali ke daftar");
+  };
 
   // Drag and drop handlers
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string)
-  }
+    setActiveId(event.active.id as string);
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    setActiveId(null)
+    const { active, over } = event;
+    setActiveId(null);
 
-    if (!over) return
+    if (!over) return;
 
-    const overId = over.id as string
-    const activeId = active.id as string
+    const overId = over.id as string;
+    const activeId = active.id as string;
 
     // Check if dropping on a grid cell
-    if (overId.startsWith('cell-')) {
-      const position = parseInt(overId.replace('cell-', ''))
-      updateRoomPosition(activeId, selectedFloor, position)
-      toast.success('Posisi kamar berhasil diatur')
+    if (overId.startsWith("cell-")) {
+      const position = parseInt(overId.replace("cell-", ""));
+      updateRoomPosition(activeId, selectedFloor, position);
+      toast.success("Posisi kamar berhasil diatur");
     }
-  }
+  };
 
   // Generate grid cells
   const gridCells = useMemo(() => {
-    const cells = []
-    const totalCells = gridCols * gridRows
-    
+    const cells = [];
+    const totalCells = gridCols * gridRows;
+
     for (let i = 0; i < totalCells; i++) {
-      const room = positionedRooms.find(r => r.posisiLayout === i)
-      const roomTipe = room ? tipeKamar.find(t => t.id === room.tipeKamarId) : undefined
-      
+      const room = positionedRooms.find((r) => r.posisiLayout === i);
+      const roomTipe = room
+        ? tipeKamar.find((t) => t.id === room.tipeKamarId)
+        : undefined;
+
       cells.push(
         <GridCell
           key={i}
@@ -391,11 +421,17 @@ export default function OperasionalKamarPage() {
           tipeKamar={roomTipe}
           onRemoveRoom={handleRemoveRoomFromGrid}
         />
-      )
+      );
     }
-    
-    return cells
-  }, [gridCols, gridRows, positionedRooms, tipeKamar, handleRemoveRoomFromGrid])
+
+    return cells;
+  }, [
+    gridCols,
+    gridRows,
+    positionedRooms,
+    tipeKamar,
+    handleRemoveRoomFromGrid,
+  ]);
 
   return (
     <Card>
@@ -407,9 +443,13 @@ export default function OperasionalKamarPage() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="status" className="w-full">
-          <TabsList className={`grid w-full ${currentUser?.role === 'Admin' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          <TabsList
+            className={`grid w-full ${
+              currentUser?.role === "Admin" ? "grid-cols-2" : "grid-cols-1"
+            }`}
+          >
             <TabsTrigger value="status">Tampilan Status Kamar</TabsTrigger>
-            {currentUser?.role === 'Admin' && (
+            {currentUser?.role === "Admin" && (
               <TabsTrigger value="layout">
                 <Settings className="h-4 w-4 mr-2" />
                 Desain Layout Kamar
@@ -473,16 +513,21 @@ export default function OperasionalKamarPage() {
             {/* Room Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredRooms.map((room) => {
-                const roomTipe = tipeKamar.find(t => t.id === room.tipeKamarId)
+                const roomTipe = tipeKamar.find(
+                  (t) => t.id === room.tipeKamarId
+                );
                 return (
                   <RoomCard
                     key={room.id}
                     room={room}
                     tipeKamar={roomTipe}
                     onStatusChange={handleStatusChange}
-                    canEdit={currentUser?.role === 'Admin' || currentUser?.role === 'Resepsionis'}
+                    canEdit={
+                      currentUser?.role === "Admin" ||
+                      currentUser?.role === "Resepsionis"
+                    }
                   />
-                )
+                );
               })}
             </div>
 
@@ -494,7 +539,7 @@ export default function OperasionalKamarPage() {
           </TabsContent>
 
           {/* Layout Designer Tab - Admin Only */}
-          {currentUser?.role === 'Admin' && (
+          {currentUser?.role === "Admin" && (
             <TabsContent value="layout" className="space-y-6">
               {/* Configuration Area */}
               <Card>
@@ -505,9 +550,11 @@ export default function OperasionalKamarPage() {
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div>
                       <Label htmlFor="floorSelect">Pilih Lantai</Label>
-                      <Select 
-                        value={selectedFloor.toString()} 
-                        onValueChange={(value) => setSelectedFloor(parseInt(value))}
+                      <Select
+                        value={selectedFloor.toString()}
+                        onValueChange={(value) =>
+                          setSelectedFloor(parseInt(value))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -528,7 +575,9 @@ export default function OperasionalKamarPage() {
                         min="1"
                         max="12"
                         value={gridCols}
-                        onChange={(e) => setGridCols(parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          setGridCols(parseInt(e.target.value) || 1)
+                        }
                       />
                     </div>
                     <div>
@@ -538,7 +587,9 @@ export default function OperasionalKamarPage() {
                         min="1"
                         max="8"
                         value={gridRows}
-                        onChange={(e) => setGridRows(parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          setGridRows(parseInt(e.target.value) || 1)
+                        }
                       />
                     </div>
                     <Button onClick={handleSaveLayout}>
@@ -553,7 +604,9 @@ export default function OperasionalKamarPage() {
                 {/* Unpositioned Rooms */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Daftar Kamar Belum Ter-posisi</CardTitle>
+                    <CardTitle className="text-lg">
+                      Daftar Kamar Belum Ter-posisi
+                    </CardTitle>
                     <p className="text-sm text-muted-foreground">
                       Lantai {selectedFloor} • {unpositionedRooms.length} kamar
                     </p>
@@ -567,14 +620,16 @@ export default function OperasionalKamarPage() {
                     >
                       <div className="space-y-2">
                         {unpositionedRooms.map((room) => {
-                          const roomTipe = tipeKamar.find(t => t.id === room.tipeKamarId)
+                          const roomTipe = tipeKamar.find(
+                            (t) => t.id === room.tipeKamarId
+                          );
                           return (
                             <DraggableRoom
                               key={room.id}
                               room={room}
                               tipeKamar={roomTipe}
                             />
-                          )
+                          );
                         })}
                       </div>
                       {unpositionedRooms.length === 0 && (
@@ -590,7 +645,9 @@ export default function OperasionalKamarPage() {
                 <div className="lg:col-span-2">
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-lg">Grid Layout Lantai {selectedFloor}</CardTitle>
+                      <CardTitle className="text-lg">
+                        Grid Layout Lantai {selectedFloor}
+                      </CardTitle>
                       <p className="text-sm text-muted-foreground">
                         {gridCols} × {gridRows} grid
                       </p>
@@ -602,27 +659,35 @@ export default function OperasionalKamarPage() {
                         onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                       >
-                        <SortableContext 
-                          items={[...Array(gridCols * gridRows)].map((_, i) => `cell-${i}`)}
+                        <SortableContext
+                          items={[...Array(gridCols * gridRows)].map(
+                            (_, i) => `cell-${i}`
+                          )}
                           strategy={rectSortingStrategy}
                         >
-                          <div 
+                          <div
                             className="grid gap-2"
-                            style={{ 
+                            style={{
                               gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-                              gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`
+                              gridTemplateRows: `repeat(${gridRows}, minmax(0, 1fr))`,
                             }}
                           >
                             {gridCells}
                           </div>
                         </SortableContext>
-                        
+
                         <DragOverlay>
                           {activeId ? (
                             <DraggableRoom
-                              room={unpositionedRooms.find(r => r.id === activeId)}
-                              tipeKamar={tipeKamar.find(t => 
-                                t.id === unpositionedRooms.find(r => r.id === activeId)?.tipeKamarId
+                              room={unpositionedRooms.find(
+                                (r) => r.id === activeId
+                              )}
+                              tipeKamar={tipeKamar.find(
+                                (t) =>
+                                  t.id ===
+                                  unpositionedRooms.find(
+                                    (r) => r.id === activeId
+                                  )?.tipeKamarId
                               )}
                               isOverlay
                             />
@@ -641,13 +706,13 @@ export default function OperasionalKamarPage() {
         <StatusChangeModal
           isOpen={isStatusModalOpen}
           onClose={() => {
-            setIsStatusModalOpen(false)
-            setSelectedRoom(null)
+            setIsStatusModalOpen(false);
+            setSelectedRoom(null);
           }}
           room={selectedRoom}
           onConfirm={handleConfirmStatusChange}
         />
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,75 +1,81 @@
-import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
-import { useAppStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { User, Mail, Calendar, Shield, Edit, Save, X } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { User, Mail, Calendar, Shield, Edit, Save, X } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AkunProfilPage() {
-  const { currentUser } = useAppStore()
-  const [isEditing, setIsEditing] = useState(false)
+  const { currentUser } = useAppStore();
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    nama: currentUser?.nama || '',
-    email: currentUser?.email || ''
-  })
+    nama: currentUser?.nama || "",
+    email: currentUser?.email || "",
+  });
 
   if (!currentUser) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/login" replace />;
   }
 
   const handleSave = () => {
     // In a real app, this would update the user in the store
-    toast.success('Profil berhasil diperbarui')
-    setIsEditing(false)
-  }
+    toast.success("Profil berhasil diperbarui");
+    setIsEditing(false);
+  };
 
   const handleCancel = () => {
     if (currentUser) {
       setFormData({
         nama: currentUser.nama,
-        email: currentUser.email
-      })
+        email: currentUser.email,
+      });
     }
-    setIsEditing(false)
-  }
+    setIsEditing(false);
+  };
 
   const getRoleText = (role: string) => {
     switch (role) {
-      case 'Admin': return 'Administrator'
-      case 'Resepsionis': return 'Resepsionis'
-      case 'Customer': return 'Pelanggan'
-      default: return role
+      case "Admin":
+        return "Administrator";
+      case "Resepsionis":
+        return "Resepsionis";
+      case "Customer":
+        return "Pelanggan";
+      default:
+        return role;
     }
-  }
+  };
 
   const getRoleVariant = (role: string) => {
     switch (role) {
-      case 'Admin': return 'default'
-      case 'Resepsionis': return 'secondary'
-      case 'Customer': return 'outline'
-      default: return 'outline'
+      case "Admin":
+        return "default";
+      case "Resepsionis":
+        return "secondary";
+      case "Customer":
+        return "outline";
+      default:
+        return "outline";
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold">Profil Saya</h1>
-        <p className="text-muted-foreground">
-          Kelola informasi profil Anda
-        </p>
+        <p className="text-muted-foreground">Kelola informasi profil Anda</p>
       </div>
 
       {/* Profile Card */}
@@ -81,7 +87,11 @@ export default function AkunProfilPage() {
               Informasi Profil
             </CardTitle>
             {!isEditing ? (
-              <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Button>
@@ -107,7 +117,9 @@ export default function AkunProfilPage() {
                 <Input
                   id="nama"
                   value={formData.nama}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nama: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, nama: e.target.value }))
+                  }
                   placeholder="Masukkan nama lengkap"
                 />
               </div>
@@ -117,7 +129,9 @@ export default function AkunProfilPage() {
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
                   placeholder="Masukkan email"
                 />
               </div>
@@ -153,8 +167,12 @@ export default function AkunProfilPage() {
               <div className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="font-medium">{formatDate(currentUser.tanggalDaftar)}</p>
-                  <p className="text-sm text-muted-foreground">Tanggal Bergabung</p>
+                  <p className="font-medium">
+                    {formatDate(currentUser.tanggalDaftar)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Tanggal Bergabung
+                  </p>
                 </div>
               </div>
             </div>
@@ -181,7 +199,7 @@ export default function AkunProfilPage() {
       </Card>
 
       {/* Account Actions */}
-      {currentUser.role === 'Customer' && (
+      {currentUser.role === "Customer" && (
         <Card>
           <CardHeader>
             <CardTitle className="text-destructive">Zona Bahaya</CardTitle>
@@ -191,11 +209,12 @@ export default function AkunProfilPage() {
               Hapus Akun
             </Button>
             <p className="text-xs text-muted-foreground mt-2">
-              Tindakan ini tidak dapat dibatalkan. Semua data Anda akan dihapus permanen.
+              Tindakan ini tidak dapat dibatalkan. Semua data Anda akan dihapus
+              permanen.
             </p>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }

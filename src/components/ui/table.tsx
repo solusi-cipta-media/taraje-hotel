@@ -1,6 +1,6 @@
-import { ComponentProps } from "react"
+import { ComponentProps } from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Table({ className, ...props }: ComponentProps<"table">) {
   return (
@@ -14,7 +14,7 @@ function Table({ className, ...props }: ComponentProps<"table">) {
         {...props}
       />
     </div>
-  )
+  );
 }
 
 function TableHeader({ className, ...props }: ComponentProps<"thead">) {
@@ -24,7 +24,7 @@ function TableHeader({ className, ...props }: ComponentProps<"thead">) {
       className={cn("[&_tr]:border-b", className)}
       {...props}
     />
-  )
+  );
 }
 
 function TableBody({ className, ...props }: ComponentProps<"tbody">) {
@@ -34,7 +34,7 @@ function TableBody({ className, ...props }: ComponentProps<"tbody">) {
       className={cn("[&_tr:last-child]:border-0", className)}
       {...props}
     />
-  )
+  );
 }
 
 function TableFooter({ className, ...props }: ComponentProps<"tfoot">) {
@@ -47,7 +47,7 @@ function TableFooter({ className, ...props }: ComponentProps<"tfoot">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableRow({ className, ...props }: ComponentProps<"tr">) {
@@ -60,7 +60,7 @@ function TableRow({ className, ...props }: ComponentProps<"tr">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableHead({ className, ...props }: ComponentProps<"th">) {
@@ -73,7 +73,7 @@ function TableHead({ className, ...props }: ComponentProps<"th">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableCell({ className, ...props }: ComponentProps<"td">) {
@@ -86,20 +86,17 @@ function TableCell({ className, ...props }: ComponentProps<"td">) {
       )}
       {...props}
     />
-  )
+  );
 }
 
-function TableCaption({
-  className,
-  ...props
-}: ComponentProps<"caption">) {
+function TableCaption({ className, ...props }: ComponentProps<"caption">) {
   return (
     <caption
       data-slot="table-caption"
       className={cn("text-muted-foreground mt-4 text-sm", className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -111,4 +108,4 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-}
+};

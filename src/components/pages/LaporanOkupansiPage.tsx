@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart3 } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart3 } from "lucide-react";
 
 export default function LaporanOkupansiPage() {
   return (
@@ -12,9 +12,10 @@ export default function LaporanOkupansiPage() {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground">
-          Halaman untuk melihat laporan tingkat okupansi kamar dan analisis pendapatan.
+          Halaman untuk melihat laporan tingkat okupansi kamar dan analisis
+          pendapatan.
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }

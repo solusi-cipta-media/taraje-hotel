@@ -1,22 +1,27 @@
-import { Link } from 'react-router-dom'
-import { useAppStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Wifi, Tv, Snowflake, Bath, Users } from 'lucide-react'
+import { Link } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Wifi, Tv, Snowflake, Bath, Users } from "lucide-react";
 
 export default function GaleriPaketPage() {
-  const { tipeKamar } = useAppStore()
+  const { tipeKamar } = useAppStore();
 
   const getFacilityIcon = (facility: string) => {
     switch (facility) {
-      case 'WiFi': return <Wifi className="h-4 w-4" />
-      case 'TV': return <Tv className="h-4 w-4" />
-      case 'AC': return <Snowflake className="h-4 w-4" />
-      case 'Kamar Mandi Dalam': return <Bath className="h-4 w-4" />
-      default: return null
+      case "WiFi":
+        return <Wifi className="h-4 w-4" />;
+      case "TV":
+        return <Tv className="h-4 w-4" />;
+      case "AC":
+        return <Snowflake className="h-4 w-4" />;
+      case "Kamar Mandi Dalam":
+        return <Bath className="h-4 w-4" />;
+      default:
+        return null;
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -37,7 +42,7 @@ export default function GaleriPaketPage() {
               <div className="flex justify-between items-start">
                 <CardTitle className="text-xl">{room.nama}</CardTitle>
                 <Badge variant="secondary" className="text-lg px-3 py-1">
-                  Rp {room.harga.toLocaleString('id-ID')}
+                  Rp {room.harga && room.harga.toLocaleString("id-ID")}
                 </Badge>
               </div>
               <p className="text-muted-foreground">{room.deskripsi}</p>
@@ -51,12 +56,16 @@ export default function GaleriPaketPage() {
               <div>
                 <h4 className="font-medium mb-2">Fasilitas:</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {room.fasilitas.map((facility, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      {getFacilityIcon(facility)}
-                      <span>{facility}</span>
-                    </div>
-                  ))}
+                  {room.fasilitas &&
+                    room.fasilitas.map((facility, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        {getFacilityIcon(facility)}
+                        <span>{facility}</span>
+                      </div>
+                    ))}
                 </div>
               </div>
 
@@ -80,5 +89,5 @@ export default function GaleriPaketPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

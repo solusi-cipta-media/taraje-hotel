@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CreditCard } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditCard } from "lucide-react";
 
 export default function OperasionalTransaksiPage() {
   return (
@@ -16,5 +16,5 @@ export default function OperasionalTransaksiPage() {
         </p>
       </CardContent>
     </Card>
-  )
+  );
 }

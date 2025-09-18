@@ -1,13 +1,22 @@
-import { Link } from 'react-router-dom'
-import { useAppStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Star, Wifi, Tv, Snowflake, Bath, MapPin, Phone, Mail } from 'lucide-react'
+import { Link } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Star,
+  Wifi,
+  Tv,
+  Snowflake,
+  Bath,
+  MapPin,
+  Phone,
+  Mail,
+} from "lucide-react";
 
 export default function HalamanUtamaPage() {
-  const { tipeKamar, currentUser } = useAppStore()
-  const featuredRooms = tipeKamar.slice(0, 2)
+  const { tipeKamar, currentUser } = useAppStore();
+  const featuredRooms = tipeKamar.slice(0, 2);
 
   return (
     <div className="space-y-8">
@@ -44,22 +53,32 @@ export default function HalamanUtamaPage() {
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">{room.nama}</CardTitle>
                   <Badge variant="secondary">
-                    Rp {room.harga.toLocaleString('id-ID')}/malam
+                    Rp {room.harga && room.harga.toLocaleString("id-ID")}/malam
                   </Badge>
                 </div>
-                <p className="text-muted-foreground text-sm">{room.deskripsi}</p>
+                <p className="text-muted-foreground text-sm">
+                  {room.deskripsi}
+                </p>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {room.fasilitas.slice(0, 4).map((fasilitas, index) => (
-                    <div key={index} className="flex items-center gap-1 text-xs text-muted-foreground">
-                      {fasilitas === 'WiFi' && <Wifi className="h-3 w-3" />}
-                      {fasilitas === 'TV' && <Tv className="h-3 w-3" />}
-                      {fasilitas === 'AC' && <Snowflake className="h-3 w-3" />}
-                      {fasilitas === 'Kamar Mandi Dalam' && <Bath className="h-3 w-3" />}
-                      <span>{fasilitas}</span>
-                    </div>
-                  ))}
+                  {room.fasilitas &&
+                    room.fasilitas.slice(0, 4).map((fasilitas, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 text-xs text-muted-foreground"
+                      >
+                        {fasilitas === "WiFi" && <Wifi className="h-3 w-3" />}
+                        {fasilitas === "TV" && <Tv className="h-3 w-3" />}
+                        {fasilitas === "AC" && (
+                          <Snowflake className="h-3 w-3" />
+                        )}
+                        {fasilitas === "Kamar Mandi Dalam" && (
+                          <Bath className="h-3 w-3" />
+                        )}
+                        <span>{fasilitas}</span>
+                      </div>
+                    ))}
                 </div>
                 <Button asChild className="w-full">
                   <Link to={`/pesan/${room.id}`}>Pesan Sekarang</Link>
@@ -79,8 +98,8 @@ export default function HalamanUtamaPage() {
         <Card>
           <CardContent className="p-6 space-y-4">
             <p className="text-muted-foreground">
-              Hotel Baru Taraje adalah pilihan terbaik untuk menginap dengan 
-              fasilitas modern dan pelayanan berkualitas. Kami berkomitmen 
+              Hotel Baru Taraje adalah pilihan terbaik untuk menginap dengan
+              fasilitas modern dan pelayanan berkualitas. Kami berkomitmen
               memberikan pengalaman menginap yang tak terlupakan.
             </p>
             <div className="flex items-center gap-4 text-sm">
@@ -116,5 +135,5 @@ export default function HalamanUtamaPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

@@ -1,74 +1,74 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAppStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { UserPlus, Eye, EyeOff } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function DaftarPage() {
   const [formData, setFormData] = useState({
-    nama: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  
-  const { register, users } = useAppStore()
-  const navigate = useNavigate()
+    nama: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { register, users } = useAppStore();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
       // Validation
       if (formData.password !== formData.confirmPassword) {
-        setError('Password dan konfirmasi password tidak sama')
-        return
+        setError("Password dan konfirmasi password tidak sama");
+        return;
       }
 
       if (formData.password.length < 6) {
-        setError('Password minimal 6 karakter')
-        return
+        setError("Password minimal 6 karakter");
+        return;
       }
 
       // Check if email already exists
-      if (users.some(user => user.email === formData.email)) {
-        setError('Email sudah terdaftar')
-        return
+      if (users.some((user) => user.email === formData.email)) {
+        setError("Email sudah terdaftar");
+        return;
       }
 
       register({
         nama: formData.nama,
         email: formData.email,
         password: formData.password,
-        role: 'Customer'
-      })
+        role: "Customer",
+      });
 
-      toast.success('Pendaftaran berhasil! Selamat datang!')
-      navigate('/')
+      toast.success("Pendaftaran berhasil! Selamat datang!");
+      navigate("/");
     } catch (err) {
-      setError('Terjadi kesalahan saat mendaftar')
+      setError("Terjadi kesalahan saat mendaftar");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="max-w-md mx-auto space-y-6">
@@ -124,7 +124,7 @@ export default function DaftarPage() {
                 <Input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Minimal 6 karakter"
@@ -137,7 +137,11 @@ export default function DaftarPage() {
                   className="absolute right-0 top-0 h-full px-3"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -148,7 +152,7 @@ export default function DaftarPage() {
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Ulangi password"
@@ -161,13 +165,17 @@ export default function DaftarPage() {
                   className="absolute right-0 top-0 h-full px-3"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Sedang mendaftar...' : 'Daftar'}
+              {isLoading ? "Sedang mendaftar..." : "Daftar"}
             </Button>
           </form>
         </CardContent>
@@ -176,7 +184,7 @@ export default function DaftarPage() {
       <Card>
         <CardContent className="p-4">
           <p className="text-sm text-center text-muted-foreground">
-            Sudah punya akun?{' '}
+            Sudah punya akun?{" "}
             <Link to="/login" className="text-primary hover:underline">
               Masuk sekarang
             </Link>
@@ -184,5 +192,5 @@ export default function DaftarPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

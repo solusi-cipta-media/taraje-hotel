@@ -1,129 +1,155 @@
-import { useState, useMemo } from 'react'
-import { Navigate } from 'react-router-dom'
-import { useAppStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2,
-  Bed,
-  Users,
-  Image
-} from 'lucide-react'
-import { toast } from 'sonner'
+import { useState, useMemo } from "react";
+import { Navigate } from "react-router-dom";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Plus, Search, Edit, Trash2, Bed, Users, Image } from "lucide-react";
+import { toast } from "sonner";
 
 interface TipeKamarFormData {
-  nama: string
-  deskripsi: string
-  hargaDefault: string
-  kapasitas: string
-  fotoUrl: string
+  nama: string;
+  deskripsi: string;
+  hargaDefault: string;
+  kapasitas: string;
+  fotoUrl: string;
 }
 
 export default function MasterTipeKamarPage() {
-  const { 
-    tipeKamar, 
-    currentUser, 
-    addTipeKamar, 
-    updateTipeKamar, 
+  const {
+    tipeKamar,
+    currentUser,
+    addTipeKamar,
+    updateTipeKamar,
     deleteTipeKamar,
     generateTipeKamarCode,
-    canDeleteTipeKamar
-  } = useAppStore()
+    canDeleteTipeKamar,
+  } = useAppStore();
 
   // Access control - hanya Admin yang bisa akses halaman ini
   if (!currentUser) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/dashboard" replace />;
   }
-  
-  if (currentUser.peran !== 'Admin' && currentUser.role !== 'Admin') {
-    return <Navigate to="/dashboard" replace />
+
+  if (currentUser.peran !== "Admin" && currentUser.role !== "Admin") {
+    return <Navigate to="/dashboard" replace />;
   }
 
   // State untuk pencarian
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("");
 
   // State untuk modal
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [editingTipeKamar, setEditingTipeKamar] = useState<any>(null)
-  const [deletingTipeKamar, setDeletingTipeKamar] = useState<any>(null)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [editingTipeKamar, setEditingTipeKamar] = useState<any>(null);
+  const [deletingTipeKamar, setDeletingTipeKamar] = useState<any>(null);
 
   // State untuk form
   const [formData, setFormData] = useState<TipeKamarFormData>({
-    nama: '',
-    deskripsi: '',
-    hargaDefault: '',
-    kapasitas: '',
-    fotoUrl: ''
-  })
+    nama: "",
+    deskripsi: "",
+    hargaDefault: "",
+    kapasitas: "",
+    fotoUrl: "",
+  });
 
   // Filtered data berdasarkan pencarian
   const filteredTipeKamar = useMemo(() => {
-    return tipeKamar.filter(tipe => {
-      const matchesSearch = tipe.nama.toLowerCase().includes(searchTerm.toLowerCase())
-      return matchesSearch
-    })
-  }, [tipeKamar, searchTerm])
+    return tipeKamar.filter((tipe) => {
+      const matchesSearch = tipe.nama
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      return matchesSearch;
+    });
+  }, [tipeKamar, searchTerm]);
 
   // Reset form
   const resetForm = () => {
     setFormData({
-      nama: '',
-      deskripsi: '',
-      hargaDefault: '',
-      kapasitas: '',
-      fotoUrl: ''
-    })
-  }
+      nama: "",
+      deskripsi: "",
+      hargaDefault: "",
+      kapasitas: "",
+      fotoUrl: "",
+    });
+  };
 
   // Validasi form
   const isFormValid = () => {
-    return formData.nama.trim() !== '' &&
-           formData.deskripsi.trim() !== '' &&
-           formData.hargaDefault.trim() !== '' &&
-           formData.kapasitas.trim() !== '' &&
-           formData.fotoUrl.trim() !== '' &&
-           Number(formData.hargaDefault) > 0 &&
-           Number(formData.kapasitas) > 0 &&
-           isValidUrl(formData.fotoUrl)
-  }
+    return (
+      formData.nama.trim() !== "" &&
+      formData.deskripsi.trim() !== "" &&
+      formData.hargaDefault.trim() !== "" &&
+      formData.kapasitas.trim() !== "" &&
+      formData.fotoUrl.trim() !== "" &&
+      Number(formData.hargaDefault) > 0 &&
+      Number(formData.kapasitas) > 0 &&
+      isValidUrl(formData.fotoUrl)
+    );
+  };
 
   // Validasi URL
   const isValidUrl = (url: string) => {
     try {
-      new URL(url)
-      return true
+      new URL(url);
+      return true;
     } catch {
-      return false
+      return false;
     }
-  }
+  };
 
   // Check nama uniqueness
   const isNamaUnique = (nama: string, excludeId?: string) => {
-    return !tipeKamar.some(tipe => tipe.nama.toLowerCase() === nama.toLowerCase() && tipe.id !== excludeId)
-  }
+    return !tipeKamar.some(
+      (tipe) =>
+        tipe.nama.toLowerCase() === nama.toLowerCase() && tipe.id !== excludeId
+    );
+  };
 
   // Handle tambah tipe kamar
   const handleAddTipeKamar = () => {
     if (!isFormValid()) {
-      toast.error('Mohon lengkapi semua field dengan benar')
-      return
+      toast.error("Mohon lengkapi semua field dengan benar");
+      return;
     }
 
     if (!isNamaUnique(formData.nama)) {
-      toast.error('Nama tipe kamar sudah digunakan.')
-      return
+      toast.error("Nama tipe kamar sudah digunakan.");
+      return;
     }
 
     addTipeKamar({
@@ -131,25 +157,25 @@ export default function MasterTipeKamarPage() {
       deskripsi: formData.deskripsi,
       hargaDefault: Number(formData.hargaDefault),
       kapasitas: Number(formData.kapasitas),
-      fotoUrl: formData.fotoUrl
-    })
-    toast.success(`Tipe kamar '${formData.nama}' berhasil ditambahkan`)
-    setIsAddModalOpen(false)
-    resetForm()
-  }
+      fotoUrl: formData.fotoUrl,
+    });
+    toast.success(`Tipe kamar '${formData.nama}' berhasil ditambahkan`);
+    setIsAddModalOpen(false);
+    resetForm();
+  };
 
   // Handle edit tipe kamar
   const handleEditTipeKamar = () => {
-    if (!editingTipeKamar) return
+    if (!editingTipeKamar) return;
 
     if (!isFormValid()) {
-      toast.error('Mohon lengkapi semua field dengan benar')
-      return
+      toast.error("Mohon lengkapi semua field dengan benar");
+      return;
     }
 
     if (!isNamaUnique(formData.nama, editingTipeKamar.id)) {
-      toast.error('Nama tipe kamar sudah digunakan.')
-      return
+      toast.error("Nama tipe kamar sudah digunakan.");
+      return;
     }
 
     updateTipeKamar(editingTipeKamar.id, {
@@ -157,55 +183,55 @@ export default function MasterTipeKamarPage() {
       deskripsi: formData.deskripsi,
       hargaDefault: Number(formData.hargaDefault),
       kapasitas: Number(formData.kapasitas),
-      fotoUrl: formData.fotoUrl
-    })
-    toast.success(`Tipe kamar '${formData.nama}' berhasil diperbarui`)
-    setIsEditModalOpen(false)
-    setEditingTipeKamar(null)
-    resetForm()
-  }
+      fotoUrl: formData.fotoUrl,
+    });
+    toast.success(`Tipe kamar '${formData.nama}' berhasil diperbarui`);
+    setIsEditModalOpen(false);
+    setEditingTipeKamar(null);
+    resetForm();
+  };
 
   // Handle delete tipe kamar
   const handleDeleteTipeKamar = () => {
-    if (!deletingTipeKamar) return
+    if (!deletingTipeKamar) return;
 
-    const success = deleteTipeKamar(deletingTipeKamar.id)
+    const success = deleteTipeKamar(deletingTipeKamar.id);
     if (success) {
-      toast.success(`Tipe kamar '${deletingTipeKamar.nama}' berhasil dihapus`)
+      toast.success(`Tipe kamar '${deletingTipeKamar.nama}' berhasil dihapus`);
     } else {
-      toast.error('Gagal menghapus tipe kamar')
+      toast.error("Gagal menghapus tipe kamar");
     }
-    setIsDeleteModalOpen(false)
-    setDeletingTipeKamar(null)
-  }
+    setIsDeleteModalOpen(false);
+    setDeletingTipeKamar(null);
+  };
 
   // Open edit modal
   const openEditModal = (tipe: any) => {
-    setEditingTipeKamar(tipe)
+    setEditingTipeKamar(tipe);
     setFormData({
       nama: tipe.nama,
       deskripsi: tipe.deskripsi,
       hargaDefault: tipe.hargaDefault.toString(),
       kapasitas: tipe.kapasitas.toString(),
-      fotoUrl: tipe.fotoUrl
-    })
-    setIsEditModalOpen(true)
-  }
+      fotoUrl: tipe.fotoUrl,
+    });
+    setIsEditModalOpen(true);
+  };
 
   // Open delete modal
   const openDeleteModal = (tipe: any) => {
-    setDeletingTipeKamar(tipe)
-    setIsDeleteModalOpen(true)
-  }
+    setDeletingTipeKamar(tipe);
+    setIsDeleteModalOpen(true);
+  };
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(amount)
-  }
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
     <TooltipProvider>
@@ -218,7 +244,12 @@ export default function MasterTipeKamarPage() {
             </div>
             <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
               <DialogTrigger asChild>
-                <Button onClick={() => { resetForm(); setIsAddModalOpen(true) }}>
+                <Button
+                  onClick={() => {
+                    resetForm();
+                    setIsAddModalOpen(true);
+                  }}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Tambah Tipe Kamar
                 </Button>
@@ -243,10 +274,14 @@ export default function MasterTipeKamarPage() {
                       id="nama"
                       placeholder="Masukkan nama tipe kamar"
                       value={formData.nama}
-                      onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nama: e.target.value })
+                      }
                     />
                     {formData.nama && !isNamaUnique(formData.nama) && (
-                      <p className="text-sm text-red-500">Nama tipe kamar sudah digunakan.</p>
+                      <p className="text-sm text-red-500">
+                        Nama tipe kamar sudah digunakan.
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -255,7 +290,9 @@ export default function MasterTipeKamarPage() {
                       id="deskripsi"
                       placeholder="Masukkan deskripsi tipe kamar"
                       value={formData.deskripsi}
-                      onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, deskripsi: e.target.value })
+                      }
                       rows={3}
                     />
                   </div>
@@ -266,11 +303,19 @@ export default function MasterTipeKamarPage() {
                       type="number"
                       placeholder="Masukkan harga default"
                       value={formData.hargaDefault}
-                      onChange={(e) => setFormData({ ...formData, hargaDefault: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          hargaDefault: e.target.value,
+                        })
+                      }
                     />
-                    {formData.hargaDefault && Number(formData.hargaDefault) <= 0 && (
-                      <p className="text-sm text-red-500">Harga harus lebih dari 0.</p>
-                    )}
+                    {formData.hargaDefault &&
+                      Number(formData.hargaDefault) <= 0 && (
+                        <p className="text-sm text-red-500">
+                          Harga harus lebih dari 0.
+                        </p>
+                      )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="kapasitas">Kapasitas Tamu *</Label>
@@ -279,10 +324,14 @@ export default function MasterTipeKamarPage() {
                       type="number"
                       placeholder="Masukkan kapasitas tamu"
                       value={formData.kapasitas}
-                      onChange={(e) => setFormData({ ...formData, kapasitas: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, kapasitas: e.target.value })
+                      }
                     />
                     {formData.kapasitas && Number(formData.kapasitas) <= 0 && (
-                      <p className="text-sm text-red-500">Kapasitas harus lebih dari 0.</p>
+                      <p className="text-sm text-red-500">
+                        Kapasitas harus lebih dari 0.
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -291,20 +340,27 @@ export default function MasterTipeKamarPage() {
                       id="fotoUrl"
                       placeholder="Masukkan URL foto"
                       value={formData.fotoUrl}
-                      onChange={(e) => setFormData({ ...formData, fotoUrl: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, fotoUrl: e.target.value })
+                      }
                     />
                     {formData.fotoUrl && !isValidUrl(formData.fotoUrl) && (
-                      <p className="text-sm text-red-500">URL foto tidak valid.</p>
+                      <p className="text-sm text-red-500">
+                        URL foto tidak valid.
+                      </p>
                     )}
                   </div>
                   <div className="flex justify-end gap-2 pt-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => { setIsAddModalOpen(false); resetForm() }}
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsAddModalOpen(false);
+                        resetForm();
+                      }}
                     >
                       Batal
                     </Button>
-                    <Button 
+                    <Button
                       onClick={handleAddTipeKamar}
                       disabled={!isFormValid() || !isNamaUnique(formData.nama)}
                     >
@@ -345,29 +401,37 @@ export default function MasterTipeKamarPage() {
               <TableBody>
                 {filteredTipeKamar.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-muted-foreground py-8"
+                    >
                       Tidak ada data tipe kamar yang ditemukan
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredTipeKamar.map((tipe) => (
                     <TableRow key={tipe.id}>
-                      <TableCell className="font-medium">{tipe.kodeTipe}</TableCell>
+                      <TableCell className="font-medium">
+                        {tipe.kodeTipe}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0">
-                            <img 
-                              src={tipe.fotoUrl} 
+                            <img
+                              src={tipe.fotoUrl}
                               alt={tipe.nama}
                               className="w-16 h-12 object-cover rounded border"
                               onError={(e) => {
-                                e.currentTarget.src = 'https://via.placeholder.com/64x48?text=No+Image'
+                                e.currentTarget.src =
+                                  "https://via.placeholder.com/64x48?text=No+Image";
                               }}
                             />
                           </div>
                           <div>
                             <div className="font-medium">{tipe.nama}</div>
-                            <div className="text-sm text-muted-foreground">{tipe.deskripsi}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {tipe.deskripsi}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -412,7 +476,10 @@ export default function MasterTipeKamarPage() {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Tipe kamar ini tidak dapat dihapus karena masih digunakan oleh satu atau lebih kamar.</p>
+                                <p>
+                                  Tipe kamar ini tidak dapat dihapus karena
+                                  masih digunakan oleh satu atau lebih kamar.
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           )}
@@ -429,14 +496,16 @@ export default function MasterTipeKamarPage() {
           <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Edit Tipe Kamar: {editingTipeKamar?.nama}</DialogTitle>
+                <DialogTitle>
+                  Edit Tipe Kamar: {editingTipeKamar?.nama}
+                </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="editKodeTipe">Kode Tipe</Label>
                   <Input
                     id="editKodeTipe"
-                    value={editingTipeKamar?.kodeTipe || ''}
+                    value={editingTipeKamar?.kodeTipe || ""}
                     disabled
                     className="bg-muted"
                   />
@@ -447,11 +516,16 @@ export default function MasterTipeKamarPage() {
                     id="editNama"
                     placeholder="Masukkan nama tipe kamar"
                     value={formData.nama}
-                    onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nama: e.target.value })
+                    }
                   />
-                  {formData.nama && !isNamaUnique(formData.nama, editingTipeKamar?.id) && (
-                    <p className="text-sm text-red-500">Nama tipe kamar sudah digunakan.</p>
-                  )}
+                  {formData.nama &&
+                    !isNamaUnique(formData.nama, editingTipeKamar?.id) && (
+                      <p className="text-sm text-red-500">
+                        Nama tipe kamar sudah digunakan.
+                      </p>
+                    )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="editDeskripsi">Deskripsi *</Label>
@@ -459,7 +533,9 @@ export default function MasterTipeKamarPage() {
                     id="editDeskripsi"
                     placeholder="Masukkan deskripsi tipe kamar"
                     value={formData.deskripsi}
-                    onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, deskripsi: e.target.value })
+                    }
                     rows={3}
                   />
                 </div>
@@ -470,11 +546,16 @@ export default function MasterTipeKamarPage() {
                     type="number"
                     placeholder="Masukkan harga default"
                     value={formData.hargaDefault}
-                    onChange={(e) => setFormData({ ...formData, hargaDefault: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, hargaDefault: e.target.value })
+                    }
                   />
-                  {formData.hargaDefault && Number(formData.hargaDefault) <= 0 && (
-                    <p className="text-sm text-red-500">Harga harus lebih dari 0.</p>
-                  )}
+                  {formData.hargaDefault &&
+                    Number(formData.hargaDefault) <= 0 && (
+                      <p className="text-sm text-red-500">
+                        Harga harus lebih dari 0.
+                      </p>
+                    )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="editKapasitas">Kapasitas Tamu *</Label>
@@ -483,10 +564,14 @@ export default function MasterTipeKamarPage() {
                     type="number"
                     placeholder="Masukkan kapasitas tamu"
                     value={formData.kapasitas}
-                    onChange={(e) => setFormData({ ...formData, kapasitas: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, kapasitas: e.target.value })
+                    }
                   />
                   {formData.kapasitas && Number(formData.kapasitas) <= 0 && (
-                    <p className="text-sm text-red-500">Kapasitas harus lebih dari 0.</p>
+                    <p className="text-sm text-red-500">
+                      Kapasitas harus lebih dari 0.
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
@@ -495,22 +580,33 @@ export default function MasterTipeKamarPage() {
                     id="editFotoUrl"
                     placeholder="Masukkan URL foto"
                     value={formData.fotoUrl}
-                    onChange={(e) => setFormData({ ...formData, fotoUrl: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fotoUrl: e.target.value })
+                    }
                   />
                   {formData.fotoUrl && !isValidUrl(formData.fotoUrl) && (
-                    <p className="text-sm text-red-500">URL foto tidak valid.</p>
+                    <p className="text-sm text-red-500">
+                      URL foto tidak valid.
+                    </p>
                   )}
                 </div>
                 <div className="flex justify-end gap-2 pt-4">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => { setIsEditModalOpen(false); setEditingTipeKamar(null); resetForm() }}
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditModalOpen(false);
+                      setEditingTipeKamar(null);
+                      resetForm();
+                    }}
                   >
                     Batal
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleEditTipeKamar}
-                    disabled={!isFormValid() || !isNamaUnique(formData.nama, editingTipeKamar?.id)}
+                    disabled={
+                      !isFormValid() ||
+                      !isNamaUnique(formData.nama, editingTipeKamar?.id)
+                    }
                   >
                     Simpan Perubahan
                   </Button>
@@ -520,20 +616,32 @@ export default function MasterTipeKamarPage() {
           </Dialog>
 
           {/* Delete Confirmation Modal */}
-          <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <AlertDialog
+            open={isDeleteModalOpen}
+            onOpenChange={setIsDeleteModalOpen}
+          >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Hapus Tipe Kamar</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Anda yakin ingin menghapus tipe kamar <strong>{deletingTipeKamar?.nama}</strong>? 
-                  Tindakan ini tidak dapat dibatalkan.
+                  Anda yakin ingin menghapus tipe kamar{" "}
+                  <strong>{deletingTipeKamar?.nama}</strong>? Tindakan ini tidak
+                  dapat dibatalkan.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={() => { setIsDeleteModalOpen(false); setDeletingTipeKamar(null) }}>
+                <AlertDialogCancel
+                  onClick={() => {
+                    setIsDeleteModalOpen(false);
+                    setDeletingTipeKamar(null);
+                  }}
+                >
                   Batal
                 </AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteTipeKamar} className="bg-red-600 hover:bg-red-700">
+                <AlertDialogAction
+                  onClick={handleDeleteTipeKamar}
+                  className="bg-red-600 hover:bg-red-700"
+                >
                   Ya, Hapus
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -542,5 +650,5 @@ export default function MasterTipeKamarPage() {
         </CardContent>
       </Card>
     </TooltipProvider>
-  )
+  );
 }
